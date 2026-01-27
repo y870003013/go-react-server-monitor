@@ -1,0 +1,19 @@
+# Go
+/backend/backend
+/agent/agent
+*.exe
+*.bin
+
+# Node / React
+**/node_modules/
+/frontend/dist/
+.eslintcache
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
