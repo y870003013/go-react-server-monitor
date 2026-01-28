@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+@theme {
+    --font-orbitron: "Orbitron", sans-serif;
+    --font-mono: "JetBrains Mono", monospace;
+
+    --color-sci-base: #0f172a;
+    /* Lighter base (slate-900) */
+    --color-sci-card: rgba(255, 255, 255, 0.03);
+    /* Much lighter, glass-like */
+    --color-sci-border: rgba(255, 255, 255, 0.1);
+    --color-sci-cyan: #00f3ff;
+    --color-sci-purple: #bc13fe;
+    --color-sci-green: #0aff0a;
+}
+
+/* Import Fonts */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Orbitron:wght@400;500;700;900&display=swap');
+
+body {
+    background-color: var(--color-sci-base);
+    color: #fff;
+    font-family: var(--font-orbitron);
+    overflow-x: hidden;
+
+    /* Complex Glass Background */
+    background-image:
+        radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(168, 85, 247, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(56, 189, 248, 0.15) 0px, transparent 50%),
+        radial-gradient(at 0% 100%, rgba(168, 85, 247, 0.15) 0px, transparent 50%),
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+    background-attachment: fixed;
+}
+
+::selection {
+    background: var(--color-sci-cyan);
+    color: #000;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-sci-cyan);
+}
+
+@layer utilities {
+    .glass-panel {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01));
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--color-sci-border);
+        box-shadow:
+            0 4px 6px -1px rgba(0, 0, 0, 0.1),
+            0 2px 4px -1px rgba(0, 0, 0, 0.06),
+            inset 0 0 20px rgba(255, 255, 255, 0.02);
+    }
+
+    .text-glow {
+        text-shadow: 0 0 10px currentColor;
+    }
+
+    .border-glow {
+        box-shadow: 0 0 10px var(--color-sci-cyan);
+    }
+
+    .shadow-glow {
+        text-shadow: 0 0 10px currentColor;
+    }
+}

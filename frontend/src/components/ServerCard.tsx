@@ -1,6 +1,8 @@
 import React from 'react';
-import { Cpu, Database, Activity } from 'lucide-react';
+import { Cpu, Database, Activity, HardDrive } from 'lucide-react';
 import { HostStats } from '../types/monitor';
+import { SciFiCard } from './ui/SciFiCard';
+import { motion } from 'framer-motion';
 
 interface ServerCardProps {
     data: HostStats;
@@ -9,40 +11,69 @@ interface ServerCardProps {
 
 export const ServerCard: React.FC<ServerCardProps> = ({ data, isOffline }) => {
     return (
-        <div className={`p-6 rounded-3xl border transition-all duration-700 ${
-            isOffline ? 'bg-zinc-900 border-zinc-800 opacity-40' : 'bg-zinc-900 border-zinc-700 hover:border-blue-500 shadow-2xl shadow-blue-500/10'
-        }`}>
-            <div className="flex justify-between items-center mb-6">
+        <SciFiCard
+            neonColor={isOffline ? 'red' : 'cyan'}
+            className={`h-full ${isOffline ? 'opacity-60 grayscale' : ''}`}
+        >
+            {/* Header */}
+            <div className="flex justify-between items-center mb-6 border-b border-white/10 pb-4">
                 <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-lg ${isOffline ? 'bg-zinc-800' : 'bg-blue-500/10 text-blue-400'}`}>
-                        <Activity size={20} />
+                    <div className={`p-2 rounded-lg ${isOffline ? 'bg-red-500/10 text-red-500' : 'bg-[var(--color-sci-cyan)]/10 text-[var(--color-sci-cyan)]'}`}>
+                        <Activity size={20} className={!isOffline ? "animate-pulse" : ""} />
                     </div>
-                    <span className="font-mono font-bold text-lg tracking-tight text-zinc-100">{data.host_id}</span>
-                </div>
-                <div className={`h-2 w-2 rounded-full ${isOffline ? 'bg-red-500' : 'bg-green-500 animate-pulse'}`} />
-            </div>
-
-            <div className="space-y-4">
-                <div className="space-y-2">
-                    <div className="flex justify-between text-xs font-medium text-zinc-500">
-                        <span className="flex items-center gap-1"><Cpu size={12}/> CPU</span>
-                        <span>{data.cpu.toFixed(1)}%</span>
-                    </div>
-                    <div className="h-1 w-full bg-zinc-800 rounded-full overflow-hidden">
-                        <div className="h-full bg-blue-500 transition-all duration-500" style={{ width: `${data.cpu}%` }} />
+                    <div>
+                        <div className="text-[10px] text-zinc-500 uppercase tracking-widest font-mono">HOST_ID</div>
+                        <div className="font-mono font-bold text-lg tracking-tight text-white shadow-glow">{data.host_id}</div>
                     </div>
                 </div>
-
-                <div className="space-y-2">
-                    <div className="flex justify-between text-xs font-medium text-zinc-500">
-                        <span className="flex items-center gap-1"><Database size={12}/> MEMORY</span>
-                        <span>{data.memory.toFixed(1)}%</span>
-                    </div>
-                    <div className="h-1 w-full bg-zinc-800 rounded-full overflow-hidden">
-                        <div className="h-full bg-emerald-500 transition-all duration-500" style={{ width: `${data.memory}%` }} />
-                    </div>
+                <div className="flex flex-col items-end">
+                    <div className={`h-2 w-2 rounded-full mb-1 shadow-[0_0_8px] ${isOffline ? 'bg-red-500 shadow-red-500' : 'bg-green-500 shadow-green-500 animate-pulse'}`} />
+                    <span className={`text-[10px] font-bold ${isOffline ? 'text-red-500' : 'text-green-500'}`}>
+                        {isOffline ? 'OFFLINE' : 'ONLINE'}
+                    </span>
                 </div>
             </div>
-        </div>
+
+            {/* Stats Grid */}
+            <div className="space-y-5">
+                {/* CPU */}
+                <div className="space-y-1">
+                    <div className="flex justify-between text-xs font-medium text-zinc-400 font-mono">
+                        <span className="flex items-center gap-2"><Cpu size={14} className="text-[var(--color-sci-purple)]" /> CORE_PROCESSOR</span>
+                        <span className="text-white">{data.cpu.toFixed(1)}%</span>
+                    </div>
+                    <div className="h-2 w-full bg-zinc-900/50 rounded-full overflow-hidden border border-white/5">
+                        <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: `${data.cpu}%` }}
+                            transition={{ type: "spring", stiffness: 50 }}
+                            className="h-full bg-[var(--color-sci-purple)] shadow-[0_0_10px_var(--color-sci-purple)]"
+                        />
+                    </div>
+                </div>
+
+                {/* MEMORY */}
+                <div className="space-y-1">
+                    <div className="flex justify-between text-xs font-medium text-zinc-400 font-mono">
+                        <span className="flex items-center gap-2"><Database size={14} className="text-[var(--color-sci-green)]" /> MEMORY_MODULE</span>
+                        <span className="text-white">{data.memory.toFixed(1)}%</span>
+                    </div>
+                    <div className="h-2 w-full bg-zinc-900/50 rounded-full overflow-hidden border border-white/5">
+                        <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: `${data.memory}%` }}
+                            transition={{ type: "spring", stiffness: 50 }}
+                            className="h-full bg-[var(--color-sci-green)] shadow-[0_0_10px_var(--color-sci-green)]"
+                        />
+                    </div>
+                </div>
+
+                {/* Decorative Data Footer */}
+                <div className="mt-4 pt-4 border-t border-white/5 flex justify-between items-center text-[10px] text-zinc-600 font-mono">
+                    <span>UPTIME: {Math.floor(Math.random() * 1000)}H</span>
+                    <span className="flex items-center gap-1"><HardDrive size={10} /> I/O: ACTIVE</span>
+                </div>
+            </div>
+        </SciFiCard>
     );
 };
