@@ -68,10 +68,34 @@ export const ServerCard: React.FC<ServerCardProps> = ({ data, isOffline }) => {
                     </div>
                 </div>
 
+                {/* DISKS */}
+                {data.disks && data.disks.map((disk, index) => (
+                    <div key={disk.path || index} className="space-y-1">
+                        <div className="flex justify-between text-xs font-medium text-zinc-400 font-mono">
+                            <span className="flex items-center gap-2 truncate max-w-[150px]" title={disk.path}>
+                                <HardDrive size={14} className="text-[var(--color-sci-cyan)]" />
+                                {disk.path === '/' ? 'ROOT_DSK' : disk.path.toUpperCase()}
+                            </span>
+                            <span className="text-white">{disk.used_percent.toFixed(1)}%</span>
+                        </div>
+                        <div className="h-2 w-full bg-zinc-900/50 rounded-full overflow-hidden border border-white/5">
+                            <motion.div
+                                initial={{ width: 0 }}
+                                animate={{ width: `${disk.used_percent}%` }}
+                                transition={{ type: "spring", stiffness: 50 }}
+                                className={`h-full shadow-[0_0_10px] ${disk.used_percent > 85 ? 'bg-red-500 shadow-red-500' : 'bg-[var(--color-sci-cyan)] shadow-[var(--color-sci-cyan)]'}`}
+                            />
+                        </div>
+                        <div className="flex justify-end text-[10px] text-zinc-600 font-mono">
+                            {disk.total_gb.toFixed(0)} GB TOTAL
+                        </div>
+                    </div>
+                ))}
+
                 {/* Decorative Data Footer */}
                 <div className="mt-4 pt-4 border-t border-white/5 flex justify-between items-center text-[10px] text-zinc-600 font-mono">
-                    <span>UPTIME: {Math.floor(Math.random() * 1000)}H</span>
-                    <span className="flex items-center gap-1"><HardDrive size={10} /> I/O: ACTIVE</span>
+                    <span>UPTIME: {(data.uptime / 3600).toFixed(1)}H</span>
+                    <span className="flex items-center gap-1">LOAD: {data.load_1.toFixed(2)}</span>
                 </div>
             </div>
         </SciFiCard>
