@@ -10,19 +10,29 @@ import (
 	"time"
 
 	"github.com/shirou/gopsutil/v3/cpu"
+	"github.com/shirou/gopsutil/v3/disk"
+	"github.com/shirou/gopsutil/v3/host"
+	"github.com/shirou/gopsutil/v3/load"
 	"github.com/shirou/gopsutil/v3/mem"
+	"github.com/shirou/gopsutil/v3/net"
 )
 
 // 数据结构要和 Center 保持一致
 type HostStats struct {
-	HostID string  `json:"host_id"`
-	CPU    float64 `json:"cpu"`
-	Memory float64 `json:"memory"`
+	HostID       string  `json:"host_id"`
+	Uptime       uint64  `json:"uptime"`     // 运行时间(秒)
+	CPU          float64 `json:"cpu"`        // CPU 使用率 %
+	Load1        float64 `json:"load_1"`     // 1分钟负载
+	Memory       float64 `json:"memory"`     // 内存使用率 %
+	DiskUsage    float64 `json:"disk_usage"` // 根路径磁盘使用率 %
+	NetBytesSent uint64  `json:"net_sent"`   // 网络发送总字节
+	NetBytesRecv uint64  `json:"net_recv"`   // 网络接收总字节
 }
 
 func main() {
 	// 1. 获取机器唯一标识（这里用主机名）
 	hostname, _ := os.Hostname()
+	hostInfo, _ := host.Info()
 	// Center 的地址，如果在本地测试就是 localhost
 	centerURL := "http://localhost:8080/report"
 
@@ -32,14 +42,27 @@ func main() {
 		// 2. 采集 CPU 使用率 (采样 1 秒)
 		cpuPercent, _ := cpu.Percent(time.Second, false)
 
-		// 3. 采集内存使用率
+		//采集Load(负载)
+		loadStat, _ := load.Avg()
+
+		// 3.s 采集内存使用率
 		vm, _ := mem.VirtualMemory()
 
-		// 4. 构造数据
+		diskStat, _ := disk.Usage("/")
+
+		netStat, _ := net.IOCounters(false)
+
+		// 构造数据
 		stats := HostStats{
-			HostID: hostname,
-			CPU:    cpuPercent[0],
-			Memory: vm.UsedPercent,
+			HostID:    hostname,
+			Uptime:    hostInfo.Uptime, // 系统启动时长
+			CPU:       cpuPercent[0],
+			Load1:     loadStat.Load1,
+			Memory:    vm.UsedPercent,
+			DiskUsage: diskStat.UsedPercent,
+			// netStat 返回的是切片，取第一个即可
+			NetBytesSent: netStat[0].BytesSent,
+			NetBytesRecv: netStat[0].BytesRecv,
 		}
 
 		// 5. 发送数据
