@@ -5,7 +5,11 @@ import { LayoutDashboard, ShieldCheck, RefreshCw, Activity, Terminal } from 'luc
 import { motion } from 'framer-motion';
 
 const App: React.FC = () => {
-    const { hosts, now } = useMonitor('ws://localhost:8080/ws');
+
+    // Use dynamic WebSocket URL based on current host
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsUrl = `${protocol}//${window.location.host}/ws`;
+    const { hosts, now } = useMonitor(wsUrl);
 
     return (
         <div className="min-h-screen text-zinc-100 selection:bg-[var(--color-sci-cyan)] selection:text-black">
